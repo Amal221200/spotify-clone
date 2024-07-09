@@ -20,7 +20,7 @@ const MainLayout = () => {
                     <Information>
                         <Outlet />
                     </Information>
-                    <div className="block h-full w-full sm:flex-[1.5_1.5_0] md:flex-1">
+                    <div className="h-full w-full sm:flex-[1.5_1.5_0] md:flex-1">
                         <Player />
                     </div>
                 </div>

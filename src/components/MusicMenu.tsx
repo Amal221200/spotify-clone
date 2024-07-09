@@ -1,7 +1,7 @@
+import { cn } from "../lib/utils";
 import { useContext, useMemo, useState } from "react";
 import { tabs } from "../constants";
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider";
-import { cn } from "../lib/utils";
 import SearchBox from "./SearchBox";
 import SongsList from "./SongsList";
 import { MenuIcon, XIcon } from "lucide-react";
@@ -11,7 +11,7 @@ import hexToRgba from "hex-to-rgba";
 const MusicMenu = () => {
     const { currentSong } = useContext(PlayerContext) as TPlayerContext
     const { open, toggleOpen } = useContext(MusicMenuContext) as TMusicMenuContext
-    const [openTab, setOpenTab] = useState<'top-tracks' | 'for-you'>('top-tracks')
+    const [openTab, setOpenTab] = useState<'top-tracks' | 'for-you'>('for-you')
     const { songs } = useContext(PlayerContext) as TPlayerContext;
     const [searchText, setSearchText] = useState('')
 
@@ -27,7 +27,7 @@ const MusicMenu = () => {
 
 
     return (
-        <div className={cn("absolute bottom-0 block sm:hidden ease-out top-0 z-20 h-full w-full bg-inherit p-3 transition-all duration-700", open ? 'left-0' : 'left-full')} style={{ background: `linear-gradient(135deg, ${rgbaAccent}, rgb(0, 0, 0) 100%), rgba(0 0 0 /0.4)`, backgroundBlendMode: 'overlay' }}>
+        <div className={cn("absolute bottom-0 block sm:hidden top-0 z-20 h-full w-full bg-inherit p-3 transition-all duration-700", open ? 'left-0' : 'left-full')} style={{ background: `linear-gradient(135deg, ${rgbaAccent}, rgb(0, 0, 0) 100%), rgba(0 0 0 /0.4)`, backgroundBlendMode: 'overlay' }}>
             <div className="flex justify-end">
                 <button type="button" onClick={toggleOpen}>
                     {

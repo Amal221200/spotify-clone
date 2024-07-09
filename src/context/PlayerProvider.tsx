@@ -1,19 +1,25 @@
 import axios from 'axios';
-import React, { createContext, MutableRefObject, useCallback, useEffect, useState } from 'react'
+import React, { createContext, MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import { Song } from '../lib/types';
 
 export interface TPlayerContext {
     songs: Song[],
+    playlist: Song[],
     currentSong: Song | null,
     play: boolean,
     muted: boolean,
+    currentSongIndex: number,
     setCurrentSong: React.Dispatch<React.SetStateAction<Song | null>>,
+    setPlaylist: React.Dispatch<React.SetStateAction<Song[]>>,
     setPlay: React.Dispatch<React.SetStateAction<boolean>>,
     setMuted: React.Dispatch<React.SetStateAction<boolean>>,
+    handleNext: () => void,
+    handlePrev: () => void,
     onPlay: (audioRef: MutableRefObject<HTMLAudioElement | undefined>) => void,
     onMuted: (audioRef: MutableRefObject<HTMLAudioElement | undefined>) => void,
-    onPlaying: (audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarRef: MutableRefObject<HTMLDivElement | undefined>, progressBarPointerRef: MutableRefObject<HTMLDivElement | undefined>) => void,
-    onFinished: (progressBarRef: MutableRefObject<HTMLDivElement | undefined>, progressBarPointerRef: MutableRefObject<HTMLDivElement | undefined>) => void,
+    onPlaying: (audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => void,
+    onFinished: (progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => void,
+    onSeek: (event: React.MouseEvent<HTMLDivElement>, audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => void,
 }
 
 export const PlayerContext = createContext<TPlayerContext | undefined>(undefined)
@@ -21,8 +27,10 @@ export const PlayerContext = createContext<TPlayerContext | undefined>(undefined
 const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     const [songs, setSongs] = useState<Song[]>([]);
     const [currentSong, setCurrentSong] = useState<Song | null>(null)
+    const [playlist, setPlaylist] = useState<Song[]>([])
     const [play, setPlay] = useState(false)
     const [muted, setMuted] = useState(false)
+    const currentSongIndex = useMemo(() => playlist.findIndex(song => song.id === currentSong?.id), [playlist, currentSong])
 
     const onPlay = useCallback((audioRef: MutableRefObject<HTMLAudioElement | undefined>) => {
         if (play) {
@@ -37,38 +45,73 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         if (!audioRef.current) {
             return
         }
-        if (muted) {
-            audioRef.current.volume = 1
-        } else {
-            audioRef.current.volume = 0
-        }
+        audioRef.current.volume = muted ? 1 : 0;
         setMuted(current => !current)
     }, [muted, setMuted])
 
-    const onPlaying = useCallback((audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarRef: MutableRefObject<HTMLDivElement | undefined>, progressBarPointerRef: MutableRefObject<HTMLDivElement | undefined>) => {
+    const onPlaying = useCallback((audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => {
         setInterval(() => {
-            if (!audioRef.current || !progressBarRef.current || !progressBarPointerRef.current) {
+            if (!audioRef.current || !progressBarTimelineRef.current || !progressBarThumbRef.current) {
                 return
             }
             const perc = (audioRef.current.currentTime / audioRef.current.duration) * 100
             if (audioRef.current.ended) {
-                progressBarRef.current.setAttribute('style', `width: 0;`)
-                progressBarPointerRef.current.setAttribute('style', `left: 0;`)
+                progressBarTimelineRef.current.setAttribute('style', `width: 0;`)
+                progressBarThumbRef.current.setAttribute('style', `left: 0;`)
             } else {
-                progressBarRef.current.setAttribute('style', `width: ${perc}%;`)
-                progressBarPointerRef.current.setAttribute('style', `left: ${perc}%;`)
+                progressBarTimelineRef.current.setAttribute('style', `width: ${perc}%;`)
+                progressBarThumbRef.current.setAttribute('style', `left: ${perc}%;`)
             }
         }, 500)
     }, [])
 
-    const onFinished = useCallback((progressBarRef: MutableRefObject<HTMLDivElement | undefined>, progressBarPointerRef: MutableRefObject<HTMLDivElement | undefined>) => {
-        if (!progressBarRef.current || !progressBarPointerRef.current) {
+
+    const onSeek = useCallback((event: React.MouseEvent<HTMLDivElement>, audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => {
+        if (!audioRef.current || !progressBarTimelineRef.current || !progressBarThumbRef.current || !progressBarTimelineRef.current.parentElement) {
             return
         }
-        progressBarRef.current.setAttribute('style', `width: 0;`)
-        progressBarPointerRef.current.setAttribute('style', `left: 0;`)
-        setPlay(false)
+        audioRef.current.currentTime = (event.nativeEvent.offsetX / progressBarTimelineRef.current.parentElement.offsetWidth) * audioRef.current.duration
     }, [])
+
+    // const onMove = useCallback((event: React.MouseEvent<HTMLDivElement>, audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => {
+    //     if (!audioRef.current || !progressBarTimelineRef.current || !progressBarThumbRef.current || !progressBarTimelineRef.current.parentElement) {
+    //         return
+    //     }
+    //     audioRef.current.currentTime = (event.nativeEvent.offsetX / progressBarTimelineRef.current.parentElement.offsetWidth) * audioRef.current.duration
+    // }, [])
+
+    const handleNext = useCallback(() => {
+        if (playlist[currentSongIndex + 1]) {
+            setCurrentSong(playlist[currentSongIndex + 1])
+        }
+
+        if (!play) {
+            setPlay(true)
+        }
+    }, [playlist, setCurrentSong, currentSongIndex, play])
+
+    const handlePrev = useCallback(() => {
+        if (playlist[currentSongIndex - 1]) {
+            setCurrentSong(playlist[currentSongIndex - 1])
+        }
+
+        if (!play) {
+            setPlay(true)
+        }
+    }, [playlist, currentSongIndex, setCurrentSong, play])
+
+    const onFinished = useCallback((progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => {
+        if (!progressBarTimelineRef.current || !progressBarThumbRef.current) {
+            return
+        }
+        progressBarTimelineRef.current.setAttribute('style', `width: 0;`)
+        progressBarThumbRef.current.setAttribute('style', `left: 0;`)
+        if (currentSongIndex === playlist.length - 1) {
+            setPlay(false)
+        } else {
+            handleNext()
+        }
+    }, [handleNext, currentSongIndex, playlist])
 
     useEffect(() => {
         async function fetchSongs() {
@@ -81,7 +124,7 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
     }, [])
 
     return (
-        <PlayerContext.Provider value={{ songs, currentSong, setCurrentSong, play, setPlay, muted, setMuted, onMuted, onPlay, onPlaying, onFinished }}>
+        <PlayerContext.Provider value={{ songs, currentSong, playlist, setPlaylist, setCurrentSong, play, setPlay, muted, setMuted, onMuted, onPlay, onPlaying, onFinished, onSeek, handleNext, handlePrev, currentSongIndex }}>
             {children}
         </PlayerContext.Provider>
     )

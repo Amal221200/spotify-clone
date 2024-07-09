@@ -1,22 +1,26 @@
 import { cn } from "../lib/utils"
 import { tabs } from "../constants"
-import { useContext, useMemo, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider"
 import SongsList from "../components/SongsList"
 import SearchBox from "../components/SearchBox"
 
 const HomePage = () => {
-    const [openTab, setOpenTab] = useState<'top-tracks'| 'for-you'>('top-tracks')
-    const { songs } = useContext(PlayerContext) as TPlayerContext;
+    const [openTab, setOpenTab] = useState<'top-tracks' | 'for-you'>('for-you')
+    const { songs, setPlaylist } = useContext(PlayerContext) as TPlayerContext;
     const [searchText, setSearchText] = useState('')
 
     const searchResults = useMemo(() => {
         if (openTab === 'top-tracks') {
             return songs.filter(song => song.top_track && (song.name.toLowerCase().startsWith(searchText) || song.artist.toLowerCase().startsWith(searchText)))
         }
-        
+
         return songs.filter(song => song.name.toLowerCase().startsWith(searchText) || song.artist.toLowerCase().startsWith(searchText))
     }, [searchText, songs, openTab])
+
+    useEffect(() => {
+        setPlaylist(searchResults)
+    }, [searchResults, setPlaylist])
 
     return (
         <div className={""}>
