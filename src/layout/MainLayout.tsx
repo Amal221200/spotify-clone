@@ -14,7 +14,7 @@ const MainLayout = () => {
     return (
         <>
             <GlobalStyles color={rgbaAccent} />
-            <div className="h-full p-3">
+            <div className="relative h-full overflow-x-hidden p-3">
                 <Header />
                 <div className="flex h-[90%] gap-x-2 md:h-full">
                     <Information>
