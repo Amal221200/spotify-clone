@@ -15,7 +15,7 @@ const Player = () => {
 
   return (
     <div className='mx-auto flex h-full max-w-80 items-center justify-center sm:w-full'>
-      <audio onPlaying={() => onPlaying(audioRef, progressBarTimelineRef, progressBarThumbRef)} ref={audioRef as LegacyRef<HTMLAudioElement>} src={currentSong.url} autoPlay={play} onEnded={() => { onFinished(progressBarTimelineRef, progressBarThumbRef) }} />
+      <audio onPlaying={() => onPlaying(audioRef, progressBarTimelineRef, progressBarThumbRef)} preload="metadata" ref={audioRef as LegacyRef<HTMLAudioElement>} src={currentSong.url} autoPlay={play} onEnded={() => { onFinished(progressBarTimelineRef, progressBarThumbRef) }} />
       <div className="flex flex-col gap-y-4 sm:w-[350px] md:w-[350px] xl:w-[400px]">
         <div>
           <h2 className="text-3xl font-semibold text-gray-100">{currentSong.name}</h2>

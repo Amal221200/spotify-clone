@@ -70,7 +70,9 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         if (!audioRef.current || !progressBarTimelineRef.current || !progressBarThumbRef.current || !progressBarTimelineRef.current.parentElement) {
             return
         }
+        
         audioRef.current.currentTime = (event.nativeEvent.offsetX / progressBarTimelineRef.current.parentElement.offsetWidth) * audioRef.current.duration
+        
     }, [])
 
     // const onMove = useCallback((event: React.MouseEvent<HTMLDivElement>, audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => {

@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getDuration(sec: number) {
-  const formatter = new Intl.DateTimeFormat('en-US', { minute: '2-digit', second: '2-digit' });
-  return formatter.formatToParts(sec)
+  const minutes = Math.floor(sec / 60).toString()
+  const rem = Math.floor(sec % 60).toString()
+
+  return `${minutes.length >= 2 ? minutes : `0${minutes}`}:${rem.length >= 2 ? rem : `0${rem}`}`
 }
