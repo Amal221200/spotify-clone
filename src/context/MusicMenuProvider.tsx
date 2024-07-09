@@ -4,7 +4,7 @@ export interface TMusicMenuContext { open: boolean, toggleOpen: () => void, onCl
 export const MusicMenuContext = createContext<TMusicMenuContext | undefined>(undefined)
 
 const MusicMenuProvider = ({ children }: { children: ReactNode }) => {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const toggleOpen = useCallback(() => {
         setOpen(current => !current)

@@ -9,7 +9,7 @@ body,
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   @apply bg-slate-950 text-gray-50;
 }
 
