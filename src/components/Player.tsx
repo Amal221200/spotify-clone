@@ -27,7 +27,7 @@ const Player = () => {
         <div>
 
           <div id="progress-bar-container" onClick={(e) => onSeek(e, audioRef, progressBarTimelineRef, progressBarThumbRef)}
-            onPointerMove={(e) => onSeek(e, audioRef, progressBarTimelineRef, progressBarThumbRef)} className="group relative mb-4 h-[2px] w-full cursor-pointer rounded-lg bg-gray-50/30">
+             className="group relative mb-4 h-[2px] w-full cursor-pointer rounded-lg bg-gray-50/30">
             <div id="progress-bar-timeline" ref={progressBarTimelineRef as LegacyRef<HTMLDivElement>} className="absolute left-0 top-0 h-[2px] rounded-lg bg-gray-50" style={{ width: '0' }} />
             <div id="progress-bar-thumb" ref={progressBarThumbRef as LegacyRef<HTMLDivElement>} className="absolute -top-[3px] h-2 w-2 translate-y-0 scale-0 transform rounded-full bg-gray-50 transition-all group-hover:scale-100" style={{ left: '0' }} />
           </div>
