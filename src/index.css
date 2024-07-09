@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  overflow-x: hidden;
+  @apply bg-slate-950 text-gray-50;
+}
+
+.scrollbar::-webkit-scrollbar {
+  background-color: transparent;
+  width: 10px;
+}
+
+.scrollbar{
+  scroll-behavior: smooth;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-width: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  transition: all .8s ease;
+  border-radius: 5px;
+}
+
+.scrollbar:hover::-webkit-scrollbar-thumb,
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: all .8s ease;
+}
