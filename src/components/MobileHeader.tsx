@@ -1,7 +1,7 @@
 import { MenuIcon, XIcon } from "lucide-react"
 import { MusicMenuContext, TMusicMenuContext } from "../context/MusicMenuProvider"
 import { useContext } from "react"
-const Header = () => {
+const MobileHeader = () => {
   const { open, toggleOpen } = useContext(MusicMenuContext) as TMusicMenuContext;
 
   return (
@@ -23,4 +23,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default MobileHeader

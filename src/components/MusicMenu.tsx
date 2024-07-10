@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { cn } from "../lib/utils";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { tabs } from "../constants";
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider";
 import SearchBox from "./SearchBox";
@@ -9,7 +10,7 @@ import { MusicMenuContext, TMusicMenuContext } from "../context/MusicMenuProvide
 import hexToRgba from "hex-to-rgba";
 
 const MusicMenu = () => {
-    const { currentSong } = useContext(PlayerContext) as TPlayerContext
+    const { currentSong, setPlaylist } = useContext(PlayerContext) as TPlayerContext
     const { open, toggleOpen } = useContext(MusicMenuContext) as TMusicMenuContext
     const [openTab, setOpenTab] = useState<'top-tracks' | 'for-you'>('for-you')
     const { songs } = useContext(PlayerContext) as TPlayerContext;
@@ -23,8 +24,12 @@ const MusicMenu = () => {
         return songs.filter(song => song.name.toLowerCase().startsWith(searchText) || song.artist.toLowerCase().startsWith(searchText))
     }, [searchText, songs, openTab])
 
-    const rgbaAccent = useMemo(() => hexToRgba(currentSong?.accent ?? '#000',), [currentSong])
 
+    const rgbaAccent = useMemo(() => hexToRgba(currentSong?.accent ?? '#000',), [currentSong])
+    
+    useEffect(() => {
+        setPlaylist(searchResults)
+    }, [searchResults])
 
     return (
         <div className={cn("absolute bottom-0 block sm:hidden top-0 z-20 h-full w-full bg-inherit p-3 transition-all duration-700", open ? 'left-0' : 'left-full')} style={{ background: `linear-gradient(135deg, ${rgbaAccent}, rgb(0, 0, 0) 100%), rgba(0 0 0 /0.4)`, backgroundBlendMode: 'overlay' }}>

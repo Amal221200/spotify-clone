@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { cn } from "../lib/utils"
 import { tabs } from "../constants"
 import { useContext, useEffect, useMemo, useState } from "react"
@@ -19,11 +20,12 @@ const HomePage = () => {
     }, [searchText, songs, openTab])
 
     useEffect(() => {
+        
         setPlaylist(searchResults)
-    }, [searchResults, setPlaylist])
+    }, [searchResults])
 
     return (
-        <div className={""}>
+        <div>
             <nav className="mb-2 flex gap-x-[2]">
                 {
                     tabs.map((tab) => (
@@ -35,7 +37,6 @@ const HomePage = () => {
             </nav>
             <div>
                 <SearchBox value={searchText} handleInput={(val) => setSearchText(val.toLowerCase())} />
-
                 <SongsList songs={searchResults} />
             </div>
         </div>

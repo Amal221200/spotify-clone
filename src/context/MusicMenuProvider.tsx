@@ -9,6 +9,7 @@ const MusicMenuProvider = ({ children }: { children: ReactNode }) => {
     const toggleOpen = useCallback(() => {
         setOpen(current => !current)
     }, [])
+    
     const onClose = useCallback(() => {
         setOpen(false)
     }, [])

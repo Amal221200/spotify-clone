@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom"
 import Information from "../components/Information"
 import Player from "../components/Player"
-import Header from "../components/Header"
+import MobileHeader from "../components/MobileHeader"
 import GlobalStyles from "../components/GlobalStyles"
 import { useContext, useMemo } from "react"
 import hexToRgba from "hex-to-rgba"
@@ -15,7 +15,7 @@ const MainLayout = () => {
         <>
             <GlobalStyles color={rgbaAccent} />
             <div className="relative h-full overflow-x-hidden p-3">
-                <Header />
+                <MobileHeader />
                 <div className="flex h-[90%] gap-x-2 md:h-full">
                     <Information>
                         <Outlet />
