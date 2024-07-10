@@ -1,21 +1,34 @@
-import { LegacyRef, useContext, useRef } from "react"
+import { LegacyRef, useContext, useEffect, useRef, useState } from "react"
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider"
 import { PlayIcon, SkipBackIcon, SkipForwardIcon, PauseIcon, EllipsisIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
+import { getDuration } from "../lib/utils";
 
 const Player = () => {
   const { currentSong, play, onMuted, muted, onPlay, onPlaying, onFinished, handlePrev, handleNext, onSeek, currentSongIndex, playlist } = useContext(PlayerContext) as TPlayerContext;
+  const [duration, setDuration] = useState('')
+  const [currentTime, setCurrentTime] = useState('')
   const audioRef = useRef<HTMLAudioElement>()
   const progressBarTimelineRef = useRef<HTMLDivElement>()
   const progressBarThumbRef = useRef<HTMLDivElement>()
 
+  useEffect(() => {
+
+  }, [])
 
   if (!currentSong) {
     return
   }
 
+
   return (
     <div className='mx-auto flex h-full max-w-80 items-center justify-center sm:w-full'>
-      <audio onPlaying={() => onPlaying(audioRef, progressBarTimelineRef, progressBarThumbRef)} preload="metadata" ref={audioRef as LegacyRef<HTMLAudioElement>} src={currentSong.url} autoPlay={play} onEnded={() => { onFinished(progressBarTimelineRef, progressBarThumbRef) }} />
+      <audio onPlaying={() => {
+        onPlaying(audioRef, progressBarTimelineRef, progressBarThumbRef, () => {
+          setCurrentTime(getDuration(Math.floor(audioRef.current?.currentTime ?? 0)))
+        })
+      }} preload="metadata" ref={audioRef as LegacyRef<HTMLAudioElement>} src={currentSong.url} autoPlay={play} onEnded={() => { onFinished(progressBarTimelineRef, progressBarThumbRef) }} onLoadedMetadata={(e) => {
+        setDuration(getDuration(Math.floor(e.currentTarget.duration)))
+      }} />
       <div className="flex flex-col gap-y-4 sm:w-[350px] md:w-[350px] xl:w-[400px]">
         <div>
           <h2 className="text-3xl font-semibold text-gray-100">{currentSong.name}</h2>
@@ -25,9 +38,12 @@ const Player = () => {
         <img src={`${import.meta.env.VITE_PUBLIC_ASSETS_API_URL}/${currentSong.cover}`} alt={currentSong.name} className="aspect-square w-full rounded object-cover object-center" />
 
         <div>
-
+          <div className="flex items-center justify-between">
+            <small>{currentTime || '0:00'}</small>
+            <small>{duration}</small>
+          </div>
           <div id="progress-bar-container" onClick={(e) => onSeek(e, audioRef, progressBarTimelineRef, progressBarThumbRef)}
-             className="group relative mb-4 h-[2px] w-full cursor-pointer rounded-lg bg-gray-50/30">
+            className="group relative mb-4 h-[2px] w-full cursor-pointer rounded-lg bg-gray-50/30">
             <div id="progress-bar-timeline" ref={progressBarTimelineRef as LegacyRef<HTMLDivElement>} className="absolute left-0 top-0 h-[2px] rounded-lg bg-gray-50" style={{ width: '0' }} />
             <div id="progress-bar-thumb" ref={progressBarThumbRef as LegacyRef<HTMLDivElement>} className="absolute -top-[3px] h-2 w-2 translate-y-0 scale-0 transform rounded-full bg-gray-50 transition-all group-hover:scale-100" style={{ left: '0' }} />
           </div>

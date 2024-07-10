@@ -17,7 +17,7 @@ export interface TPlayerContext {
     handlePrev: () => void,
     onPlay: (audioRef: MutableRefObject<HTMLAudioElement | undefined>) => void,
     onMuted: (audioRef: MutableRefObject<HTMLAudioElement | undefined>) => void,
-    onPlaying: (audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => void,
+    onPlaying: (audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>, callback?: () => void) => void,
     onFinished: (progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => void,
     onSeek: (event: React.MouseEvent<HTMLDivElement>, audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => void,
 }
@@ -49,11 +49,12 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         setMuted(current => !current)
     }, [muted, setMuted])
 
-    const onPlaying = useCallback((audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>) => {
+    const onPlaying = useCallback((audioRef: MutableRefObject<HTMLAudioElement | undefined>, progressBarTimelineRef: MutableRefObject<HTMLDivElement | undefined>, progressBarThumbRef: MutableRefObject<HTMLDivElement | undefined>, callback?: () => void) => {
         setInterval(() => {
             if (!audioRef.current || !progressBarTimelineRef.current || !progressBarThumbRef.current) {
                 return
             }
+
             const perc = (audioRef.current.currentTime / audioRef.current.duration) * 100
             if (audioRef.current.ended) {
                 progressBarTimelineRef.current.setAttribute('style', `width: 0;`)
@@ -62,7 +63,11 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
                 progressBarTimelineRef.current.setAttribute('style', `width: ${perc}%;`)
                 progressBarThumbRef.current.setAttribute('style', `left: ${perc}%;`)
             }
-        }, 500)
+
+            if (callback) {
+                callback()
+            }
+        }, 1000)
     }, [])
 
 
@@ -70,9 +75,9 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
         if (!audioRef.current || !progressBarTimelineRef.current || !progressBarThumbRef.current || !progressBarTimelineRef.current.parentElement) {
             return
         }
-        
+
         audioRef.current.currentTime = (event.nativeEvent.offsetX / progressBarTimelineRef.current.parentElement.offsetWidth) * audioRef.current.duration
-        
+
     }, [])
 
     const handleNext = useCallback(() => {
