@@ -5,7 +5,7 @@ import { MusicMenuContext, TMusicMenuContext } from "../context/MusicMenuProvide
 import { Song } from "../lib/types"
 import SongCard from "./SongCard"
 
-const SongsList = ({ songs }: { songs: Song[] }) => {
+const SongsList = ({ songs, handleClick }: { songs: Song[], handleClick: () => void }) => {
     const { open } = useContext(MusicMenuContext) as TMusicMenuContext
 
     useGSAP(() => {
@@ -53,7 +53,7 @@ const SongsList = ({ songs }: { songs: Song[] }) => {
     }, [songs, open])
 
     return (
-        <div className="scrollbar song-list space-y-1">
+        <div className="scrollbar song-list space-y-1" onClick={handleClick}>
             {
                 songs.map((song) => (
                     <div className="song-card overflow-hidden" key={song.id}>
