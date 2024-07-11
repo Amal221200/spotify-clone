@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { cn } from "../lib/utils"
 import { tabs } from "../constants"
-import { useContext, useMemo, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider"
 import SongsList from "../components/SongsList"
 import SearchBox from "../components/SearchBox"
@@ -21,9 +21,9 @@ const HomePage = () => {
         return songs.filter(song => song.name.toLowerCase().startsWith(searchText) || song.artist.toLowerCase().startsWith(searchText))
     }, [searchText, songs, openTab])
 
-    // useEffect(() => {
-    //     setPlaylist(searchResults)
-    // }, [searchResults])
+    useEffect(() => {        
+        setPlaylist(songs)
+    }, [songs])
 
     return (
         <div>

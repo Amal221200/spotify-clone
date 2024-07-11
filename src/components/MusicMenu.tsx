@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { cn } from "../lib/utils";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { tabs } from "../constants";
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider";
 import SearchBox from "./SearchBox";
@@ -29,6 +29,9 @@ const MusicMenu = () => {
 
     const rgbaAccent = useMemo(() => hexToRgba(currentSong?.accent ?? '#000',), [currentSong])
 
+    useEffect(()=> {
+        setPlaylist(songs)
+    }, [songs])
     return (
         <div className={cn("absolute bottom-0 block sm:hidden top-0 z-20 h-full w-full bg-inherit p-3 transition-all duration-700", open ? 'left-0' : 'left-full')} style={{ background: `linear-gradient(135deg, ${rgbaAccent}, rgb(0, 0, 0) 100%), rgba(0 0 0 /0.4)`, backgroundBlendMode: 'overlay' }}>
             <div className="flex justify-end">
