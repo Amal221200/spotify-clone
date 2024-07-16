@@ -10,7 +10,8 @@ const HomePage = () => {
     const [openTab, setOpenTab] = useState<'top-tracks' | 'for-you' | 'current-playlist'>('for-you')
     const { songs, setPlaylist, playlist } = useContext(PlayerContext) as TPlayerContext;
     const [searchText, setSearchText] = useState('')
-
+    console.log(songs);
+    
     const searchResults = useMemo(() => {
         if (openTab === 'top-tracks') {
             return songs.filter(song => song.top_track && (song.name.toLowerCase().startsWith(searchText) || song.artist.toLowerCase().startsWith(searchText)))

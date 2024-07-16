@@ -1,4 +1,4 @@
-import { LegacyRef, useContext, useEffect, useRef, useState } from "react"
+import { LegacyRef, useContext, useRef, useState } from "react"
 import { PlayerContext, TPlayerContext } from "../context/PlayerProvider"
 import { PlayIcon, SkipBackIcon, SkipForwardIcon, PauseIcon, EllipsisIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
 import { getDuration } from "../lib/utils";
@@ -11,9 +11,7 @@ const Player = () => {
   const progressBarTimelineRef = useRef<HTMLDivElement>()
   const progressBarThumbRef = useRef<HTMLDivElement>()
 
-  useEffect(() => {
-
-  }, [])
+console.log(currentSong);
 
   if (!currentSong) {
     return
@@ -21,7 +19,7 @@ const Player = () => {
 
 
   return (
-    <div className='mx-auto flex h-full max-w-80 items-center justify-center sm:w-full'>
+    <div key={currentSong.id} className='mx-auto flex h-full max-w-80 items-center justify-center sm:w-full'>
       <audio onPlaying={() => {
         onPlaying(audioRef, progressBarTimelineRef, progressBarThumbRef, () => {
           setCurrentTime(getDuration(Math.floor(audioRef.current?.currentTime ?? 0)))
@@ -35,7 +33,7 @@ const Player = () => {
           <h4 className="text-sm text-gray-100/70">{currentSong.artist}</h4>
         </div>
 
-        <img src={`${import.meta.env.VITE_PUBLIC_ASSETS_API_URL}/${currentSong.cover}`} alt={currentSong.name} className="aspect-square w-full rounded object-cover object-center" />
+        <img src={`${currentSong.cover}`} alt={currentSong.name} className="aspect-square w-full rounded object-cover object-center" />
 
         <div>
           <div className="flex items-center justify-between">

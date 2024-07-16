@@ -30,7 +30,7 @@ const SongCard = ({ song }: { song: Song }) => {
                 setDuration(getDuration(Math.floor(e.currentTarget.duration)))
             }} hidden />
             <div>
-                <img src={`${import.meta.env.VITE_PUBLIC_ASSETS_API_URL}/${song.cover}`} alt={song.name} className={cn("h-9 w-9 rounded-full object-cover object-center duration-1000", (currentSong?.id === song.id && play) ? 'animate-spin' : '')} />
+                <img src={`${song.cover}`} alt={song.name} className={cn("h-9 w-9 rounded-full object-cover object-center duration-1000", (currentSong?.id === song.id && play) ? 'animate-spin' : '')} />
             </div>
             <div className="flex-1 px-3">
                 <p className="text-white/90">

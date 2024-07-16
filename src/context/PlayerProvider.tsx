@@ -1,5 +1,5 @@
-import axios from 'axios';
-import React, { createContext, MutableRefObject, useCallback, useEffect, useMemo, useState } from 'react'
+import data from "../data.json"
+import { createContext, MutableRefObject, useCallback, useMemo, useState } from 'react'
 import { Song } from '../lib/types';
 
 export interface TPlayerContext {
@@ -25,8 +25,8 @@ export interface TPlayerContext {
 export const PlayerContext = createContext<TPlayerContext | undefined>(undefined)
 
 const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
-    const [songs, setSongs] = useState<Song[]>([]);
-    const [currentSong, setCurrentSong] = useState<Song | null>(null)
+    const [songs,] = useState<Song[]>(data.data);
+    const [currentSong, setCurrentSong] = useState<Song | null>(data.data[0])
     const [playlist, setPlaylist] = useState<Song[]>([])
     const [play, setPlay] = useState(false)
     const [muted, setMuted] = useState(false)
@@ -112,16 +112,6 @@ const PlayerProvider = ({ children }: { children: React.ReactNode }) => {
             handleNext()
         }
     }, [handleNext, currentSongIndex, playlist])
-
-    useEffect(() => {
-        async function fetchSongs() {
-            const response = await axios.get<{ data: Song[] }>(import.meta.env.VITE_PUBLIC_SONGS_API_URL);
-            const songs = response.data.data;
-            setSongs(songs)
-            setCurrentSong(response.data.data[0])
-        }
-        fetchSongs()
-    }, [])
 
     return (
         <PlayerContext.Provider value={{ songs, currentSong, playlist, setPlaylist, setCurrentSong, play, setPlay, muted, setMuted, onMuted, onPlay, onPlaying, onFinished, onSeek, handleNext, handlePrev, currentSongIndex }}>
